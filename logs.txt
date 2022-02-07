@@ -1,0 +1,18 @@
+
+2022年2月5日21:17:06
+在win10的pycharm(2021.3.1)中, 安装指定包到virtualenv创建的python虚拟环境:
+    1. 
+    打开cmd终端(不是powershell); 进入当前project文件夹下; 使用pip命令进行安装:(实测可行,关掉代理的情况下)
+    venv\Scripts\pip install -r requirements.txt
+
+    2.
+    Pycharm Python Packages 安装Python包命令:(貌似没什么用)
+    'E:\学习\研一\研一课程\计算机视觉与模式识别\第3次实验\projects\project1 - v0\vclab-project1\project1\venv\Scripts\activate.bat' (换成venv\Scripts\activate.bat依旧没用, 一直是使用的是系统默认pip, 原因未知)
+    pip install --proxy http://127.0.0.1:7890 imageio (代理不可用, 原因未知), 开代理时pip无法工作
+
+    3.
+    最快捷的办法, pycharm识别到requirements文件之后会自动弹出安装包的对话框(白折腾一场),
+    但是这种方法有bug
+
+
+
