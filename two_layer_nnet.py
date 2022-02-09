@@ -192,7 +192,66 @@ best_net = None # store the best model into this
 # automatically like we did on the previous exercises.                          #
 #################################################################################
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-best_net = net
+best_net = None
+
+def train_and_validate(num_iters=1000, batch_size=200,
+                learning_rate=1e-4, learning_rate_decay=0.95,
+                reg=0.25):
+    X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data()
+    input_size = 32 * 32 * 3
+    num_classes = 10
+    hidden_size = 50
+    best_net = None
+    best_acc = 0.0
+    best_parameter = None
+
+    # 构造待测试的参数表
+    initial_parameter = {'hidden_size': hidden_size, 'num_iters': num_iters, 'batch_size': batch_size,
+                        'learning_rate': learning_rate, 'learning_rate_decay': learning_rate_decay, 'reg': reg,
+                        'val_acc': 0.0}
+    initial_parameter['learning_rate'] = 1e-3
+    parameter_list = [initial_parameter.copy() for i in range(12)]
+    parameter_list[1]['hidden_size'] = 30
+    parameter_list[2]['hidden_size'] = 70
+    parameter_list[3]['learning_rate'] = 5e-4
+    parameter_list[4]['learning_rate'] = 5e-3
+    parameter_list[5]['num_iters'] = 500
+    parameter_list[6]['num_iters'] = 1500
+    parameter_list[7]['reg'] = 0.10
+    parameter_list[8]['reg'] = 0.35
+    parameter_list[9]['batch_size'] = 500
+    parameter_list[10]['learning_rate'] = 1e-3
+    parameter_list[10]['hidden_size'] = 70
+    parameter_list[11]['learning_rate'] = 1e-3
+    parameter_list[11]['hidden_size'] = 100
+
+    # training and validation
+    for (i, parameter) in enumerate(parameter_list):
+        # build net
+        net = TwoLayerNet(input_size, parameter['hidden_size'], num_classes)
+
+        # Train the network
+        print('\nstart training : (%d/%d)\n\t' % (i, len(parameter_list)), parameter)
+        stats = net.train(X_train, y_train, X_val, y_val,
+                    num_iters=parameter['num_iters'], batch_size=parameter['batch_size'],
+                    learning_rate=parameter['learning_rate'], learning_rate_decay=parameter['learning_rate_decay'],
+                    reg=parameter['reg'], verbose=True)
+
+        # Predict on the validation set
+        val_acc = (net.predict(X_val) == y_val).mean()
+        parameter['val_acc'] = val_acc
+        print('end training : (%d/%d)\n\t' % (i, len(parameter_list)), parameter, '\n')
+
+        # save best net
+        if val_acc > best_acc:
+            best_acc = val_acc
+            best_parameter = parameter
+            best_net = net
+    return best_net, best_parameter, parameter_list
+
+# train and validate
+best_net, best_parameter, parameter_list = train_and_validate()
+print('best_parameter:\n ', best_parameter)
 pass
 
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****

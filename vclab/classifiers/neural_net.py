@@ -107,6 +107,8 @@ class TwoLayerNet(object):
         scores_sub = scores - np.max(scores, axis=1, keepdims=True)  # 保证数值稳定
         softmax_matrix = np.exp(scores_sub) / np.exp(scores_sub).sum(axis=1, keepdims=True)
         loss = np.sum(-np.log(softmax_matrix[np.arange(N), y])) / N
+        if N == 0:
+            debug = 1
         loss = loss + reg * ((W1 * W1).sum() + (W2 * W2).sum())
         # myloss = - (scores[np.arange(N), y] - np.log(np.exp(scores).sum(axis=1)))
         # myloss = myloss + reg * ((W1 * W1).sum() + (W2 * W2).sum())
