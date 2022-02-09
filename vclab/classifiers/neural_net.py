@@ -80,6 +80,12 @@ class TwoLayerNet(object):
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
+        X1 = X
+        fc1 = X1 @ W1 + b1  # 全连接
+        X2 = np.maximum(fc1, 0.0)  # ReLU
+        X3 = X2 @ W2 + b2  # 全连接
+        scores = X3  # scores
+        # loss = - (scores[np.arange(N), y] - np.log(np.exp(scores).sum(axis=1))) # loss
         pass
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -98,6 +104,12 @@ class TwoLayerNet(object):
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
+        scores_sub = scores - np.max(scores, axis=1, keepdims=True)  # 保证数值稳定
+        softmax_matrix = np.exp(scores_sub) / np.exp(scores_sub).sum(axis=1, keepdims=True)
+        loss = np.sum(-np.log(softmax_matrix[np.arange(N), y])) / N
+        loss = loss + reg * ((W1 * W1).sum() + (W2 * W2).sum())
+        # myloss = - (scores[np.arange(N), y] - np.log(np.exp(scores).sum(axis=1)))
+        # myloss = myloss + reg * ((W1 * W1).sum() + (W2 * W2).sum())
         pass
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -110,7 +122,31 @@ class TwoLayerNet(object):
         # grads['W1'] should store the gradient on W1, and be a matrix of same size #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        # softmax层
+        d_loss_scores = softmax_matrix
+        d_loss_scores[np.arange(N), y] -= 1
+        d_loss_scores = d_loss_scores / N  # 除N是因为用N个数据计算的梯度进行平均
 
+        # 第二层
+        dW2 = X2.T @ d_loss_scores
+        db2 = d_loss_scores.sum(axis=0)  # db2 = d_loss_scores.T @ np.ones([N, 1])
+        db2tmp = d_loss_scores.T @ np.ones([N, 1])
+
+        # 第一层
+        dW1 = d_loss_scores @ W2.T
+        dfc1 = dW1 * (fc1 > 0)
+        dW1 = X1.T @ dfc1
+        db1 = dfc1.sum(axis=0)
+
+        # 正则化
+        dW1 += reg * 2 * W1
+        dW2 += reg * 2 * W2
+
+        # 保存参数到grads
+        grads['W1'] = dW1
+        grads['b1'] = db1
+        grads['W2'] = dW2
+        grads['b2'] = db2
         pass
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -155,7 +191,9 @@ class TwoLayerNet(object):
             # them in X_batch and y_batch respectively.                             #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+            num_random = np.minimum(num_train, batch_size)
+            random_index = np.random.randint(num_train, size=num_random)
+            X_batch, y_batch = X[random_index], y[random_index]
             pass
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -171,7 +209,8 @@ class TwoLayerNet(object):
             # stored in the grads dictionary defined above.                         #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+            for param in self.params:
+                self.params[param] = self.params[param] - learning_rate * grads[param]
             pass
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -217,7 +256,8 @@ class TwoLayerNet(object):
         # TODO: Implement this function; it should be VERY simple!                #
         ###########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        scores = self.loss(X)
+        y_pred = np.argmax(scores, axis=1)
         pass
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****

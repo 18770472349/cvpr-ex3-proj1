@@ -12,7 +12,23 @@
 
     3.
     最快捷的办法, pycharm识别到requirements文件之后会自动弹出安装包的对话框(白折腾一场),
-    但是这种方法有bug
+    这种方法中软件内部自动调用pip install单独安装每个包, 但是这个无法自动调整包依赖可能有点bug, 无法看到安装过程的报错信息, 安装时调试不方便
+
+
+2022年2月7日19:58:18(debug logs)
+原本提供的requirement.txt有问题, 无法在python3.7的环境上安装:
+    在pycharm中利用virtualenv创建虚拟环境后,
+    反复调试修改requirements.txt, 最后成功利用命令pip install -r requirements.txt成功安装好了依赖包.
+
+针对 pycharm ipython 无法打开的问题:
+		"for cf in Application._load_config_files("ipython_config", path=profile_dir):
+	RuntimeError: generator raised StopIteration
+	无法连接到控制台进程。"
+	原因是ipython==4.0.1和其基于的包traitlets==4.0.0相对于pycharm内部的控制台启动程序太老了.
+	估计原因是ipython==4.0.1和traitlets==4.0.0的依赖关系正确, 但是traitlets==4.0.0与pycharm2021.3不适配.
+	解决办法有两个:
+		一是卸载虚拟环境的ipython包, 用pycharm自带的ipython包启动(也能是配置工程环境的基础python环境里的ipython环境,对这个问题影响不大).
+		二是更新traitlets到>=4.3.0(已测试4.3.0是最低的可用版本).
 
 
 

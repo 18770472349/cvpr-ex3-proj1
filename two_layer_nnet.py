@@ -82,6 +82,7 @@ plt.title('Training Loss history')
 plt.show()
 from vclab.data_utils import load_CIFAR10
 
+# raise ValueError('error')
 
 def get_CIFAR10_data(num_training=49000, num_validation=1000, num_test=1000):
     """
@@ -191,7 +192,7 @@ best_net = None # store the best model into this
 # automatically like we did on the previous exercises.                          #
 #################################################################################
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+best_net = net
 pass
 
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****

@@ -44,3 +44,4 @@ traitlets==4.3.0 # traitlets==4.0.0 # pycharm2021.3 needs traitlets>=4.3.0
 # wsgiref==0.1.2 # too old, used for python2
 # jupyter==1.0.0 # duplicated
 pillow # pillow==3.1.0
+imageio # needed to read images
