@@ -31,4 +31,7 @@
 		二是更新traitlets到>=4.3.0(已测试4.3.0是最低的可用版本).
 
 
+2022年2月10日22:09:21
+ {'hidden_size': 100, 'num_iters': 1000, 'batch_size': 200, 'learning_rate': 0.0019999999999999983, 'learning_rate_decay': 0.85, 'reg': 0.25, 'val_acc': 0.511}
+
 
